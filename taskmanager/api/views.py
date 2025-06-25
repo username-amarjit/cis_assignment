@@ -21,7 +21,7 @@ class UserRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 
 class UserReactivateView(generics.UpdateAPIView):
     queryset = User.objects.all()
-    permission_classes = [IsAuthenticated, IsAdminOrManager]
+    permission_classes = [IsAdminOrManager]
 
     def patch(self, request, *args, **kwargs):
         user = self.get_object()
