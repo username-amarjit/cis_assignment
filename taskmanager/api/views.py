@@ -15,6 +15,17 @@ class UserRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = UserSerializer
     permission_classes = [IsAdmin]
 
+class UserReactivateView(generics.UpdateAPIView):
+    queryset = User.objects.all()
+    permission_classes = [IsAuthenticated, IsAdminOrManager]
+
+    def patch(self, request, *args, **kwargs):
+        user = self.get_object()
+        if user.is_active:
+            return Response({"detail": "User is already active."}, status=status.HTTP_400_BAD_REQUEST)
+        user.is_active = True
+        user.save()
+        return Response({"detail": "User has been reactivated."}, status=status.HTTP_200_OK)
 
 class TaskListView(generics.ListAPIView):
     queryset = Task.objects.all()
