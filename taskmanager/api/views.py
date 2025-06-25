@@ -1,3 +1,7 @@
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import generics
 from api.permissions import IsAdmin, IsManager, IsAuthenticated, IsAdminOrManager
 from api.serializers import UserSerializer, TaskSerializer
@@ -51,3 +55,16 @@ class TaskDestroyView(generics.DestroyAPIView):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
     permission_classes = [IsAdminOrManager]
+
+
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        try:
+            refresh_token = request.data["refresh"]
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            return Response({"detail": "Successfully logged out."}, status=status.HTTP_205_RESET_CONTENT)
+        except:
+            return Response({"error": "Error while logging out."}, status=status.HTTP_400_BAD_REQUEST)
